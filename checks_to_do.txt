@@ -1,0 +1,7 @@
+cd build
+make [test_name] -j16
+./test/[test_name]             // do the test
+make format
+make check-lint
+make [check clang-tidy-name]
+
