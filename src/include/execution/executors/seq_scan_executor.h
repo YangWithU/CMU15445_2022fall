@@ -56,6 +56,6 @@ class SeqScanExecutor : public AbstractExecutor {
   TableIterator table_iter_ = {nullptr, RID{}, nullptr};
 
   // records info for table
-  const TableInfo* tableinfo_;
+  const TableInfo *tableinfo_;
 };
 }  // namespace bustub
