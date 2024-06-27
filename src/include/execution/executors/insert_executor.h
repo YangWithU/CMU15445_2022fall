@@ -57,6 +57,18 @@ class InsertExecutor : public AbstractExecutor {
  private:
   /** The insert plan node to be executed*/
   const InsertPlanNode *plan_;
+
+  // schema, name, oid, tableheap
+  TableInfo *table_info_;
+
+  // set of indexes
+  std::vector<IndexInfo *> table_indexes_;
+
+  // is cur executor end
+  bool is_end_{false};
+
+  // volcano: sub executor
+  std::unique_ptr<AbstractExecutor> child_executor_;
 };
 
 }  // namespace bustub
