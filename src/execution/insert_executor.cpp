@@ -33,7 +33,7 @@ auto InsertExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) -> bool {
 
   Tuple tp_to_insert{};
   RID emit_rid;
-  uint32_t insert_count = 0;
+  int32_t insert_count = 0;
 
   while (child_executor_->Next(&tp_to_insert, &emit_rid)) {
     bool inserted = table_info_->table_->InsertTuple(tp_to_insert, &emit_rid, nullptr);
@@ -50,6 +50,7 @@ auto InsertExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) -> bool {
 
   std::vector<Value> values;
   values.reserve(GetOutputSchema().GetColumnCount());
+
   values.emplace_back(TypeId::INTEGER, insert_count);
 
   *tuple = Tuple{values, &this->GetOutputSchema()};
