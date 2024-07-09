@@ -170,6 +170,7 @@ auto ParseInner(const std::string &filename, const std::string &script) -> std::
   return records;
 }
 
+// 构造预期查询目标，包含输入sql，预期结果
 auto SQLLogicTestParser::Parse(const std::string &script) -> std::vector<std::unique_ptr<Record>> {
   return ParseInner("<main>", script);
 }

@@ -402,7 +402,7 @@ auto MockScanExecutor::Next(Tuple *tuple, RID *rid) -> bool {
     return EXECUTOR_EXHAUSTED;
   }
   if (shuffled_idx_.empty()) {
-    *tuple = func_(cursor_);
+    *tuple = func_(cursor_); // 在383行构建
   } else {
     *tuple = func_(shuffled_idx_[cursor_]);
   }

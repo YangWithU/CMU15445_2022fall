@@ -91,7 +91,9 @@ class Tuple {
   auto GetDataPtr(const Schema *schema, uint32_t column_idx) const -> const char *;
 
   bool allocated_{false};  // is allocated?
-  RID rid_{};              // if pointing to the table heap, the rid is valid
+
+  // page_id当前tuple在哪个TablePage上；slot_num当前在column的哪个tuple上
+  RID rid_{};  // if pointing to the table heap, the rid is valid
   uint32_t size_{0};
   char *data_{nullptr};
 };

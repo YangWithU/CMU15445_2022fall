@@ -37,6 +37,8 @@ auto TableIterator::operator->() -> Tuple * {
   return tuple_;
 }
 
+// ++迭代器
+// 根据GetTupleCount跑所有的tuple,但调用一次只跑一个tuple:火山模型
 auto TableIterator::operator++() -> TableIterator & {
   BufferPoolManager *buffer_pool_manager = table_heap_->buffer_pool_manager_;
   auto cur_page = static_cast<TablePage *>(buffer_pool_manager->FetchPage(tuple_->rid_.GetPageId()));
@@ -46,6 +48,8 @@ auto TableIterator::operator++() -> TableIterator & {
   RID next_tuple_rid;
   if (!cur_page->GetNextTupleRid(tuple_->rid_,
                                  &next_tuple_rid)) {  // end of this page
+
+    // 意思是可能tuple比较大，一张page没存下，当前page跑到末尾，需要再拿 下一个page
     while (cur_page->GetNextPageId() != INVALID_PAGE_ID) {
       auto next_page = static_cast<TablePage *>(buffer_pool_manager->FetchPage(cur_page->GetNextPageId()));
       cur_page->RUnlatch();
@@ -74,6 +78,7 @@ auto TableIterator::operator++() -> TableIterator & {
   return *this;
 }
 
+// 迭代器++
 auto TableIterator::operator++(int) -> TableIterator {
   TableIterator clone(*this);
   ++(*this);

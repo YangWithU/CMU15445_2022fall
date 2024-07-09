@@ -338,6 +338,7 @@ auto TablePage::GetFirstTupleRid(RID *first_rid) -> bool {
   return false;
 }
 
+// 顺序遍历column的tuple，每次用下一个slot_num，有则函数返true
 auto TablePage::GetNextTupleRid(const RID &cur_rid, RID *next_rid) -> bool {
   BUSTUB_ASSERT(cur_rid.GetPageId() == GetTablePageId(), "Wrong table!");
   // Find and return the first valid tuple after our current slot number.

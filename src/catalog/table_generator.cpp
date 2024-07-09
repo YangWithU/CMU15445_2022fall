@@ -169,6 +169,9 @@ void TableGenerator::GenerateTestTables() {
       //  {{"colA", TypeId::BIGINT, false, Dist::Serial, 0, 0}, {"colB", TypeId::INTEGER, false, Dist::Uniform, 0, 9}}},
   };
 
+  // meta -> schema -> tableinfo -> FillTable
+  // column type info, not containing actual data
+
   for (auto &table_meta : insert_meta) {
     // Create Schema
     std::vector<Column> cols{};
