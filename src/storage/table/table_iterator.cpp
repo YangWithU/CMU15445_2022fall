@@ -48,7 +48,6 @@ auto TableIterator::operator++() -> TableIterator & {
   RID next_tuple_rid;
   if (!cur_page->GetNextTupleRid(tuple_->rid_,
                                  &next_tuple_rid)) {  // end of this page
-
     // 意思是可能tuple比较大，一张page没存下，当前page跑到末尾，需要再拿 下一个page
     while (cur_page->GetNextPageId() != INVALID_PAGE_ID) {
       auto next_page = static_cast<TablePage *>(buffer_pool_manager->FetchPage(cur_page->GetNextPageId()));

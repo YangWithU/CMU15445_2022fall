@@ -235,9 +235,14 @@ auto BustubInstance::ExecuteSqlTxn(const std::string &sql, ResultWriter &writer,
         if (col_ids.size() != 1) {
           throw NotImplementedException("only support creating index with exactly one column");
         }
+        // 为新的作为index的col构造key_schema
         auto key_schema = Schema::CopySchema(&index_stmt.table_->schema_, col_ids);
 
         std::unique_lock<std::shared_mutex> l(catalog_lock_);
+
+        // 取create index t1v1 on t1(v1);中的v1 column 作为index
+        // 首先拿v1创建key_schema
+        // 之后调用CreateIndex遍历key_schema创建index
         auto info = catalog_->CreateIndex<IntegerKeyType, IntegerValueType, IntegerComparatorType>(
             txn, index_stmt.index_name_, index_stmt.table_->table_, index_stmt.table_->schema_, key_schema, col_ids,
             INTEGER_SIZE, IntegerHashFunctionType{});

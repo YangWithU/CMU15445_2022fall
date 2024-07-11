@@ -34,6 +34,7 @@ class Schema {
    */
   explicit Schema(const std::vector<Column> &columns);
 
+  // 从attrs选出column，构造一个新的Schema
   static auto CopySchema(const Schema *from, const std::vector<uint32_t> &attrs) -> Schema {
     std::vector<Column> cols;
     cols.reserve(attrs.size());

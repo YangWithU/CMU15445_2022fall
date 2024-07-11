@@ -37,7 +37,7 @@ auto InsertExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) -> bool {
   int32_t insert_count = 0;
 
   while (child_executor_->Next(&tp_to_insert, &emit_rid)) {
-    bool inserted = table_info_->table_->InsertTuple(tp_to_insert, &emit_rid, exec_ctx_->GetTransaction());
+    bool inserted = table_info_->table_->InsertTuple(tp_to_insert, rid, exec_ctx_->GetTransaction());
 
     if (inserted) {
       auto insert_entry = [&](IndexInfo *idx) {

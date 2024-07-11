@@ -31,7 +31,7 @@ auto SeqScanExecutor::Next(Tuple *tuple, RID *rid) -> bool {
     // table_iter overloads *operator, returns Table
     auto &table = *table_iter_;
     *tuple = table;
-    
+
     *rid = tuple->GetRid();
 
     ++table_iter_;
