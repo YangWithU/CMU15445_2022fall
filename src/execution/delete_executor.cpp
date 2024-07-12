@@ -41,6 +41,7 @@ auto DeleteExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) -> bool {
 
     if (deleted) {
       // table_info_, exec_ctx_: 拷不拷贝？
+      // delete_entry 从b+树中删除index
       auto delete_entry = [&](IndexInfo *indexinfo) -> void {
         indexinfo->index_->DeleteEntry(
             tp_to_delete.KeyFromTuple(table_info_->schema_, indexinfo->key_schema_, indexinfo->index_->GetKeyAttrs()),

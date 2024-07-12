@@ -21,6 +21,9 @@ BPLUSTREE_INDEX_TYPE::BPlusTreeIndex(std::unique_ptr<IndexMetadata> &&metadata, 
       comparator_(GetMetadata()->GetKeySchema()),
       container_(GetMetadata()->GetName(), buffer_pool_manager, comparator_) {}
 
+// 最小index构造单元：向b+树上插入index
+// key是作为index的column的值
+// value是这个index tuple的RID
 INDEX_TEMPLATE_ARGUMENTS
 void BPLUSTREE_INDEX_TYPE::InsertEntry(const Tuple &key, RID rid, Transaction *transaction) {
   // construct insert index key

@@ -188,6 +188,7 @@ class Catalog {
 
   /**
    * Create a new index, populate existing data of the table and return its metadata.
+   * 利用TableHeap的迭代器遍历index column所有的tuple，调用InsertEntry向b+树插入所有的tuple
    * @param txn The transaction in which the table is being created
    * @param index_name The name of the new index
    * @param table_name The name of the table

@@ -40,6 +40,8 @@ auto InsertExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) -> bool {
     bool inserted = table_info_->table_->InsertTuple(tp_to_insert, rid, exec_ctx_->GetTransaction());
 
     if (inserted) {
+      // insert_entry 在向已经建立index的table上插入新值时候会被调用
+      // 向b+树插入新的index
       auto insert_entry = [&](IndexInfo *idx) {
         idx->index_->InsertEntry(
             tp_to_insert.KeyFromTuple(table_info_->schema_, idx->key_schema_, idx->index_->GetKeyAttrs()), *rid,

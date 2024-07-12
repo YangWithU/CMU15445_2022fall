@@ -66,24 +66,56 @@ class SimpleAggregationHashTable {
   /**
    * TODO(Student)
    *
+   * 具体aggregate计算方法层,aggregate计算带计算数据input
+   * 算完直接修改到hashmap的value,完成aggregate计算,等待next查询
+   *
    * Combines the input into the aggregation result.
    * @param[out] result The output aggregate value
    * @param input The input value
    */
   void CombineAggregateValues(AggregateValue *result, const AggregateValue &input) {
     for (uint32_t i = 0; i < agg_exprs_.size(); i++) {
+      // agg_types_在AggregationExecutor构造时候就确定了，由plan传递agg_types_
       switch (agg_types_[i]) {
         case AggregationType::CountStarAggregate:
+          result->aggregates_[i] = result->aggregates_[i].Add(ValueFactory::GetIntegerValue(1));
+          break;
         case AggregationType::CountAggregate:
+          if (result->aggregates_[i].IsNull()) {
+            result->aggregates_[i] = ValueFactory::GetIntegerValue(0);
+          }
+          if (!input.aggregates_[i].IsNull()) {
+            result->aggregates_[i] = result->aggregates_[i].Add(ValueFactory::GetIntegerValue(1));
+          }
+          break;
         case AggregationType::SumAggregate:
+          if (result->aggregates_[i].IsNull()) {
+            result->aggregates_[i] = input.aggregates_[i];
+          } else if (!input.aggregates_[i].IsNull()) {
+            result->aggregates_[i] = result->aggregates_[i].Add(input.aggregates_[i]);
+          }
+          break;
         case AggregationType::MinAggregate:
+          if (result->aggregates_[i].IsNull()) {
+            result->aggregates_[i] = input.aggregates_[i];
+          } else if (!input.aggregates_[i].IsNull()) {
+            result->aggregates_[i] = result->aggregates_[i].Min(input.aggregates_[i]);
+          }
+          break;
         case AggregationType::MaxAggregate:
+          if (result->aggregates_[i].IsNull()) {
+            result->aggregates_[i] = input.aggregates_[i];
+          } else if (!input.aggregates_[i].IsNull()) {
+            result->aggregates_[i] = result->aggregates_[i].Max(input.aggregates_[i]);
+          }
           break;
       }
     }
   }
 
   /**
+   * 计算aggregate value,算完直接修改到hashmap上
+   * 
    * Inserts a value into the hash table and then combines it with the current aggregation.
    * @param agg_key the key to be inserted
    * @param agg_val the value to be inserted
@@ -99,6 +131,8 @@ class SimpleAggregationHashTable {
    * Clear the hash table
    */
   void Clear() { ht_.clear(); }
+
+  void InsertInitialCombine() { ht_.insert({{std::vector<Value>()}, GenerateInitialAggregateValue()}); }
 
   /** An iterator over the aggregation hash table */
   class Iterator {
@@ -134,6 +168,8 @@ class SimpleAggregationHashTable {
 
   /** @return Iterator to the end of the hash table */
   auto End() -> Iterator { return Iterator{ht_.cend()}; }
+
+  auto Size() -> size_t { return ht_.size(); }
 
  private:
   /** The hash table is just a map from aggregate keys to aggregate values */
@@ -189,6 +225,11 @@ class AggregationExecutor : public AbstractExecutor {
   /** @return The tuple as an AggregateValue */
   auto MakeAggregateValue(const Tuple *tuple) -> AggregateValue {
     std::vector<Value> vals;
+
+    // expr->Evaluate()意思是尝试进行表达式解析计算,常量表达式直接回Value,别的从tuple上拿数据
+    // 有时,expr类型是ConstantValueExpression
+    // 一般发生于GetAggregates是count(*)时候
+    // 这意味着expr里面已经有了val_,Evalulate直接根据val_构造Value(1)
     for (const auto &expr : plan_->GetAggregates()) {
       vals.emplace_back(expr->Evaluate(tuple, child_->GetOutputSchema()));
     }
@@ -201,8 +242,8 @@ class AggregationExecutor : public AbstractExecutor {
   /** The child executor that produces tuples over which the aggregation is computed */
   std::unique_ptr<AbstractExecutor> child_;
   /** Simple aggregation hash table */
-  // TODO(Student): Uncomment SimpleAggregationHashTable aht_;
+  SimpleAggregationHashTable aht_;
   /** Simple aggregation hash table iterator */
-  // TODO(Student): Uncomment SimpleAggregationHashTable::Iterator aht_iterator_;
+  SimpleAggregationHashTable::Iterator aht_iterator_;
 };
 }  // namespace bustub
