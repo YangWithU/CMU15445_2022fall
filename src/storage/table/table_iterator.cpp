@@ -41,6 +41,8 @@ auto TableIterator::operator->() -> Tuple * {
 // 根据GetTupleCount跑所有的tuple,但调用一次只跑一个tuple:火山模型
 auto TableIterator::operator++() -> TableIterator & {
   BufferPoolManager *buffer_pool_manager = table_heap_->buffer_pool_manager_;
+
+  // tuple_->rid_.GetPageId() tuple_是TableIterator成员变量,是利用page拿的rid初始化的空tuple
   auto cur_page = static_cast<TablePage *>(buffer_pool_manager->FetchPage(tuple_->rid_.GetPageId()));
   BUSTUB_ENSURE(cur_page != nullptr, "BPM full");  // all pages are pinned
 
