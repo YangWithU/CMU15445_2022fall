@@ -41,7 +41,7 @@ void AggregationExecutor::Init() {
     aht_iterator_ = aht_.Begin();
 }
 
-// 该计算的aggregate已经存在aht.ht_上了,Next直接迭代器遍历hashtable构造tuple返回就行了
+// 应该计算的aggregate已经存在aht.ht_上了,Next直接迭代器遍历hashtable构造tuple返回就行了
 auto AggregationExecutor::Next(Tuple *tuple, RID *rid) -> bool {
     if (aht_iterator_ == aht_.End()) {
         return false;

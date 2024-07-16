@@ -230,6 +230,7 @@ class AggregationExecutor : public AbstractExecutor {
     // 有时,expr类型是ConstantValueExpression
     // 一般发生于GetAggregates是count(*)时候
     // 这意味着expr里面已经有了val_,Evalulate直接根据val_构造Value(1)
+    // 遍历次数对应select Aggregate语句的数量
     for (const auto &expr : plan_->GetAggregates()) {
       vals.emplace_back(expr->Evaluate(tuple, child_->GetOutputSchema()));
     }
