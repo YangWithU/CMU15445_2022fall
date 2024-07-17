@@ -19,15 +19,16 @@ IndexScanExecutor::IndexScanExecutor(ExecutorContext *exec_ctx, const IndexScanP
       index_info_(this->exec_ctx_->GetCatalog()->GetIndex(plan_->index_oid_)),
       table_info_(this->exec_ctx_->GetCatalog()->GetTable(index_info_->table_name_)),
       bptree_index_(dynamic_cast<BPlusTreeIndexForOneIntegerColumn *>(index_info_->index_.get())),
-      iterator_(plan->filter_predicate_ == nullptr ? bptree_index_->GetBeginIterator()
-                                                   : BPlusTreeIndexIteratorForOneIntegerColumn(nullptr, nullptr)) {}
+      // iterator_(plan->filter_predicate_ == nullptr ? bptree_index_->GetBeginIterator()
+      //                                              : BPlusTreeIndexIteratorForOneIntegerColumn(nullptr, nullptr)) {}
+      iterator_(bptree_index_->GetBeginIterator()) {}
 
 void IndexScanExecutor::Init() {
-  if (plan_->filter_predicate_ != nullptr) {
-    const auto *right_expr =
-        dynamic_cast<const ConstantValueExpression *>(plan_->filter_predicate_->children_[1].get());
-    Value val = right_expr->val_;
-  }
+  // if (plan_->filter_predicate_ != nullptr) {
+  //   const auto *right_expr =
+  //       dynamic_cast<const ConstantValueExpression *>(plan_->filter_predicate_->children_[1].get());
+  //   Value val = right_expr->val_;
+  // }
 }
 
 auto IndexScanExecutor::Next(Tuple *tuple, RID *rid) -> bool {

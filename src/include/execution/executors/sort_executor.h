@@ -54,7 +54,7 @@ class SortExecutor : public AbstractExecutor {
   const SortPlanNode *plan_;
 
   std::unique_ptr<AbstractExecutor> child_executor_;
-  std::vector<Tuple> child_tuples_;
+  std::vector<Tuple> child_tuples_;  // 实际存储Init()后排好序的tuple的容器
 
   std::vector<Tuple>::const_iterator child_iterator_;
 };

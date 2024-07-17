@@ -48,6 +48,16 @@ void SortExecutor::Init() {
   child_iterator_ = child_tuples_.begin();
 }
 
-auto SortExecutor::Next(Tuple *tuple, RID *rid) -> bool { return false; }
+auto SortExecutor::Next(Tuple *tuple, RID *rid) -> bool {
+  if (child_iterator_ == child_tuples_.end()) {
+    return false;
+  }
+
+  *tuple = *child_iterator_;
+  *rid = tuple->GetRid();
+
+  ++child_iterator_;
+  return true;
+}
 
 }  // namespace bustub

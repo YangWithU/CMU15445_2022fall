@@ -115,7 +115,7 @@ class SimpleAggregationHashTable {
 
   /**
    * 计算aggregate value,算完直接修改到hashmap上
-   * 
+   *
    * Inserts a value into the hash table and then combines it with the current aggregation.
    * @param agg_key the key to be inserted
    * @param agg_val the value to be inserted
